@@ -52,5 +52,3 @@ rsconnect/
 rsconnect/
 
 data/
-
-git rm -r --cached data/
