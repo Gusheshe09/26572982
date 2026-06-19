@@ -6,14 +6,14 @@
 library(tidyverse)
 
 # ------------------------------------------------------------
-# FUNCTION: Loading th coffee data and handling encoding issues
+# FUNCTION: Loading the coffee data and handling encoding issues
 # ------------------------------------------------------------
 load_coffee <- function(path) {
 
     df <- read_csv(path, show_col_types = FALSE,
                    locale = locale(encoding = "UTF-8"))
 
-    # Clean curly quotes and other special characters from name column
+    # Cleaning curly quotes and other special characters from name column
     df <- df %>%
         mutate(name = iconv(name, from = "UTF-8", to = "ASCII//TRANSLIT"),
                name = str_squish(name),
@@ -48,15 +48,15 @@ clean_coffee <- function(df) {
                               levels = c("Light", "Medium-Light", "Medium",
                                          "Medium-Dark", "Dark", "Unknown"),
                               ordered = TRUE)) %>%
-        # Combine all three descriptions into one text column for keyword search
+        # Combining all three descriptions into one text column for keyword search
         mutate(full_desc = paste(desc_1, desc_2, desc_3, sep = " ")) %>%
-        # Remove rows with missing cost
+        # Removing rows with missing cost
         filter(!is.na(Cost_Per_100g))
 }
 
 Coffee_clean <- clean_coffee(Coffee)
 
-# Confirm
+# Confirming
 glimpse(Coffee_clean)
 
 
@@ -97,7 +97,7 @@ Coffee_clean %>%
 
 
 # ------------------------------------------------------------
-# STEP 3: Filter to recommended coffees
+# STEP 3: Filtering to recommended coffees
 # ------------------------------------------------------------
 
 Coffee_recommended <- Coffee_clean %>%
@@ -107,8 +107,8 @@ Coffee_recommended <- Coffee_clean %>%
 # STEP 4: Plot 1 - Average Rating by Roast Type
 # ------------------------------------------------------------
 
-plot_roast_rating <- function(df) {
 
+plot_roast_rating <- function(df) {
     df %>%
         filter(roast != "Unknown") %>%
         group_by(roast) %>%
@@ -121,6 +121,7 @@ plot_roast_rating <- function(df) {
         geom_col(show.legend = FALSE) +
         geom_text(aes(label = round(avg_rating, 1)),
                   vjust = -0.5, size = 4) +
+        coord_cartesian(ylim = c(90, 94.5)) +
         labs(
             title = "Average Expert Rating by Roast Type",
             subtitle = "Based on Stellenbosch student keyword-matched coffees",
@@ -133,13 +134,12 @@ plot_roast_rating <- function(df) {
 p1 <- plot_roast_rating(Coffee_recommended)
 p1
 
-
 # ------------------------------------------------------------
 # STEP 5: Plot 2 - Top 10 Countries by Average Rating
 # ------------------------------------------------------------
 
-plot_country_rating <- function(df) {
 
+plot_country_rating <- function(df) {
     df %>%
         group_by(loc_country) %>%
         summarise(
@@ -147,7 +147,6 @@ plot_country_rating <- function(df) {
             n = n(),
             .groups = "drop"
         ) %>%
-        # Only keep countries with at least 5 coffees for reliability
         filter(n >= 5) %>%
         arrange(desc(avg_rating)) %>%
         slice_head(n = 10) %>%
@@ -157,7 +156,7 @@ plot_country_rating <- function(df) {
         geom_col(show.legend = FALSE) +
         geom_text(aes(label = paste0(round(avg_rating, 1), " (n=", n, ")")),
                   hjust = -0.1, size = 3.5) +
-        scale_x_continuous(limits = c(0, 100)) +
+        coord_cartesian(xlim = c(90, 95)) +
         labs(
             title = "Top Roaster Countries by Average Expert Rating",
             subtitle = "Filtered to countries with at least 5 coffees in recommended set",
@@ -169,6 +168,9 @@ plot_country_rating <- function(df) {
 
 p2 <- plot_country_rating(Coffee_recommended)
 p2
+
+
+
 
 
 # ------------------------------------------------------------
@@ -204,8 +206,9 @@ p3
 # STEP 7: Plot 4 - Top 10 Roasters by Average Rating
 # ------------------------------------------------------------
 
-plot_top_roasters <- function(df) {
 
+
+plot_top_roasters <- function(df) {
     df %>%
         group_by(roaster) %>%
         summarise(
@@ -213,7 +216,6 @@ plot_top_roasters <- function(df) {
             n = n(),
             .groups = "drop"
         ) %>%
-        # Only keep roasters with at least 3 coffees for reliability
         filter(n >= 3) %>%
         arrange(desc(avg_rating)) %>%
         slice_head(n = 10) %>%
@@ -223,7 +225,7 @@ plot_top_roasters <- function(df) {
         geom_col(show.legend = FALSE) +
         geom_text(aes(label = paste0(round(avg_rating, 1), " (n=", n, ")")),
                   hjust = -0.1, size = 3.5) +
-        scale_x_continuous(limits = c(0, 100)) +
+        coord_cartesian(xlim = c(90, 96)) +
         labs(
             title = "Top 10 Roasters by Average Expert Rating",
             subtitle = "Filtered to roasters with at least 3 coffees in recommended set",
@@ -275,7 +277,7 @@ Coffee_recommended %>%
     n = n(),
     .groups = "drop"
   ) %>%
-  # Filter for reliability - at least 3 coffees AND minimum rating above 93
+  # Filtering for reliability - at least 3 coffees AND minimum rating above 93
   filter(n >= 3, min_rating >= 93) %>%
   arrange(desc(avg_rating))
 
@@ -284,6 +286,9 @@ Coffee_recommended %>%
 # ------------------------------------------------------------
 # STEP 9: Plot 6 - Most Consistent Medium-Light Roasters
 # ------------------------------------------------------------
+
+
+
 
 plot_consistent_medlight <- function(df) {
 
@@ -296,9 +301,7 @@ plot_consistent_medlight <- function(df) {
             n = n(),
             .groups = "drop"
         ) %>%
-        # Need at least 3 coffees to measure consistency
         filter(n >= 3) %>%
-        # Lower sd = more consistent
         arrange(sd_rating) %>%
         slice_head(n = 10) %>%
         ggplot(aes(x = sd_rating,
@@ -308,7 +311,7 @@ plot_consistent_medlight <- function(df) {
         geom_text(aes(label = paste0("Avg: ", round(avg_rating, 1),
                                      " | n=", n)),
                   hjust = -0.1, size = 3.5) +
-        scale_x_continuous(limits = c(0, 3)) +
+        coord_cartesian(xlim = c(0, 1)) +
         scale_fill_gradient(low = "darkblue", high = "lightblue",
                             name = "Avg Rating") +
         labs(
@@ -322,5 +325,9 @@ plot_consistent_medlight <- function(df) {
 
 p6 <- plot_consistent_medlight(Coffee_recommended)
 p6
+
+
+
+
 
 
