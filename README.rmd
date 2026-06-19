@@ -22,3 +22,241 @@ list.files('code/', full.names = T, recursive = T) %>% .[grepl('.R', .)] %>% as.
 ```
 
 
+---
+title: "Data Science Practical Exam 2026"
+author: "Student Number: 26572982"
+date: "2026"
+output:
+  md_document:
+    variant: gfm
+    toc: true
+    toc_depth: 2
+---
+
+# Data Science Practical Exam 2026
+**Student Number:** 26572982
+
+---
+
+## 1. Overview
+
+This project represents the Data Science Practical Exam for the Stellenbosch University Economics Department. It covers **four distinct data science problems** across different domains:
+
+1. **Coffee Hub** — Sourcing recommendations for a coffee entrepreneur
+2. **Baby Names** — US naming trends and cultural influences
+3. **Loans and Credit** — Default prediction and risk analysis
+4. **Netflix** — Streaming content strategy analysis
+
+Each question required data cleaning, exploratory analysis, statistical modelling, and the production of a client-facing report.
+
+---
+
+## 2. Project Structure
+
+```
+26572982/
+├── Question1/                    # Coffee Hub Analysis
+│   └── code/
+│       └── Coffee_Analysis.R
+├── Question2/                    # Baby Names Analysis
+│   └── code/
+│       └── Baby_Names_Analysis.R
+├── Question3/                    # Loans and Credit Analysis
+│   └── code/
+│       └── Loans_Analysis.R
+├── Question4/                    # Netflix Analysis
+│   └── code/
+│       └── Netflix_Analysis.R
+├── data/                         # Data folder (not committed)
+├── README.md
+└── 26572982.Rproj
+```
+
+---
+
+## 3. How to Reproduce
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/26572982.git
+   cd 26572982
+   ```
+
+2. **Download the data**
+   
+   Download the data from: [datsci.nfkatzke.com/PracData26Folder.zip](https://datsci.nfkatzke.com/PracData26Folder.zip)
+
+3. **Place data in the `data/` folder**
+   
+   Extract the zip file and place the contents in the `data/` folder:
+   ```
+   data/
+   ├── Coffee/
+   │   └── Coffee.csv
+   ├── US_Baby_names/
+   │   ├── Baby_Names_By_US_State.rds
+   │   ├── charts.rds
+   │   ├── HBO_titles.rds
+   │   └── HBO_credits.rds
+   ├── Loan_Cred/
+   │   ├── loan_data.rds
+   │   └── Dictionary.xlsx
+   └── netflix/
+       ├── titles.rds
+       ├── credits.rds
+       └── netflix_movies.csv
+   ```
+
+4. **Open the R Project**
+   
+   Open `26572982.Rproj` in RStudio.
+
+5. **Run each question's script**
+   
+   ```r
+   # Run each analysis script
+   source("Question1/code/Coffee_Analysis.R")
+   source("Question2/code/Baby_Names_Analysis.R")
+   source("Question3/code/Loans_Analysis.R")
+   source("Question4/code/Netflix_Analysis.R")
+   ```
+
+> ⚠️ **Important:** The `data/` folder is **not committed to GitHub** (it's in `.gitignore`) due to file size and data sensitivity.
+
+---
+
+## 4. Question Summaries
+
+### Question 1 — Coffee Hub
+
+**Objective:** Provide sourcing recommendations for a coffee entrepreneur stocking her Neelsie shop.
+
+**Approach:**
+- Loaded and cleaned coffee data using a custom encoding-aware loader function
+- Matched coffees to Stellenbosch student preferences using keyword scoring from the survey word cloud
+- Applied a threshold of 10+ keywords to balance quality with supply-side flexibility
+- Analysed ratings by roast type, country, cost and roaster
+
+**Output:** PowerPoint slides — `Question1/Coffee_Hub_Final.pptx`
+
+**Key Findings:**
+- Medium-Light roasts score highest (93.7 avg) and represent 71% of supply
+- Taiwan (93.8, n=185) and US (93.5, n=369) offer the best quality and supply volume
+- Price above $50/100g does not guarantee better quality
+- Top roasters: Hula Daddy Kona (95.0), Dragonfly Coffee Roasters (94.4), Kakalove Cafe (94.2)
+
+---
+
+### Question 2 — Baby Names
+
+**Objective:** Analyse US baby naming trends (1910–2014) for a toy design agency.
+
+**Approach:**
+- Aggregated 5.6M state-level baby name records to national level
+- Computed Spearman rank correlation to measure name persistence over time (top 25 names, comparing to next 1-3 years)
+- Identified cultural spikes and cross-referenced with Billboard Hot 100 and HBO data
+- Built bubble charts showing name popularity by decade
+
+**Output:** HTML report — `Question2/Baby_Names_Report.html`
+
+**Key Findings:**
+- Name persistence has **declined since the 1990s** — confirming the agency's hypothesis
+- Cultural events (artist debuts, TV characters, celebrity moments) demonstrably cause naming spikes
+- The 1974 "Katina" spike from the TV show *Where the Heart Is* was identified and confirmed
+
+---
+
+### Question 3 — Loans and Credit
+
+**Objective:** Analyse loan default predictors for the US Department of Credit and Loans.
+
+**Approach:**
+- Cleaned 1 million loan records and created a binary default flag
+- Analysed default rates by credit grade, home ownership, employment length, DTI, state and loan purpose
+- Tested the Credit Institute's three heuristics against the data
+
+**Output:** HTML report — `Question3/Loans_Report.html`
+
+**Key Findings:**
+- **Credit grade is the strongest predictor** of default (A = 2.1%, F = 25.7%)
+- **Recommended DTI hard cap: 20%** (default rate doubles from 9.4% to 18.8% at DTI > 20)
+- **Texas is not different** from other states (default rate = 11.1% vs. US average = 11.3%)
+- **Home ownership** does reduce default risk (6.6% vs. 12.4% for renters)
+
+---
+
+### Question 4 — Netflix
+
+**Objective:** Provide insights on streaming content strategy for a prospective new service.
+
+**Approach:**
+- Analysed Netflix content by country, ratings, movie length and genre
+- Performed text analysis on movie descriptions
+- Compared Netflix vs HBO content strategy and ratings
+
+**Output:** HTML report — `Question4/Netflix_Report.html`
+
+**Key Findings:**
+- US dominates volume (57% of content) but not quality (avg rating = 6.2)
+- Japan leads on ratings (6.8 avg), driven by anime and drama
+- HBO maintains higher average IMDb score (7.1 vs 6.4) — quality over quantity
+- Documentaries are the highest-rated genre on Netflix (7.3 avg)
+
+---
+
+## 5. Packages Used
+
+```r
+# Core
+tidyverse        # Data manipulation and plotting
+ggplot2          # Visualisations
+lubridate        # Date handling
+scales           # Axis formatting
+
+# Reports
+officer          # PowerPoint generation
+rvg              # Vector graphics for PowerPoint
+rmarkdown        # HTML/PDF report generation
+
+# Text Analysis
+tidytext         # Text mining for description analysis
+
+# Additional
+naniar           # Missing data visualisation
+corrr            # Correlation analysis
+plotly           # Interactive visualisations
+```
+
+**Install all packages with:**
+```r
+install.packages(c("tidyverse", "ggplot2", "lubridate", "scales", 
+                   "officer", "rvg", "rmarkdown", "tidytext", 
+                   "naniar", "corrr", "plotly"))
+```
+
+---
+
+## 6. Data Sources
+
+| Dataset | Source | Format |
+|---------|--------|--------|
+| Coffee Reviews | `datsci.nfkatzke.com/PracData26Folder.zip` | CSV |
+| US Baby Names | US Social Security Administration | RDS |
+| Billboard Hot 100 | Billboard Magazine | RDS |
+| HBO Titles & Credits | IMDb / HBO | RDS |
+| Lending Club Loans | Lending Club (anonymised) | RDS + XLSX |
+| Netflix Content | IMDb / Netflix | RDS + CSV |
+
+---
+
+## 7. Contact
+
+**Student Number:** 26572982
+
+**Email:** 26572982@sun.ac.za
+
+**GitHub:** https://github.com/Gusheshe09/26572982
+
+---
+
+*Data Science Practical Exam 2026 — Stellenbosch University, Department of Economics*
